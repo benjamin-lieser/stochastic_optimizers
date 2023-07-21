@@ -1,0 +1,14 @@
+[package]
+name = "stochastic_optimizers"
+version = "0.0.1"
+edition = "2021"
+authors = ["Benjamin Lieser"]
+description = "Generic implementations of gradient based stochastic optimizing algorithms"
+repository = "https://github.com/benjamin-lieser/stochastic_optimizers"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+keywords = ["machine learning", "optimization", "gradient"]
+
+[dependencies]
+
+num-traits = "0.2"
