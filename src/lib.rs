@@ -1,6 +1,8 @@
 mod optimizers;
 mod impls;
 
+pub use optimizers::Adam;
+
 /// makes a type be used as a parameter in an optimizer.
 /// The type should represent a owned collection of scalar variables. For example `Vec<f64>` or `[f64;10]`
 pub trait Parameters {
