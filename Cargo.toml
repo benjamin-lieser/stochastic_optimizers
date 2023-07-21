@@ -7,7 +7,7 @@ description = "Generic implementations of gradient based stochastic optimizing a
 repository = "https://github.com/benjamin-lieser/stochastic_optimizers"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-keywords = ["machine learning", "optimization", "gradient"]
+keywords = ["machine-learning", "optimization", "gradient"]
 
 [dependencies]
 
