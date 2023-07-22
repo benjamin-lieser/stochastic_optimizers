@@ -1,6 +1,9 @@
 mod optimizers;
 mod impls;
 
+#[cfg(test)]
+mod test_utils;
+
 pub use optimizers::Adam;
 
 /// makes a type be used as a parameter in an optimizer.

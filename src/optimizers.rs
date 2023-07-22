@@ -68,13 +68,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use std::vec;
-    use core::convert::TryFrom;
-
     use super::*;
 
-    use tch::Tensor;
-    use tch::Kind;
     use tch::COptimizer;
 
     #[test]
@@ -94,32 +89,13 @@ mod tests {
     }
 
     #[test]
-    fn pytorch_test() {
+    fn pytorch_compare() {
         let init = vec![3.0, 1.0, 4.0, 1.0, 5.0];
-        let init_torch  = Tensor::from_slice(&init).requires_grad_(true);
 
-        let mut optimizer = Adam::new(init, 0.005);
+        let optimizer = Adam::new(init, 0.005);
 
-        let mut optimizer_torch = COptimizer::adam(0.005, 0.9, 0.999, 0.0, 1e-8, false).unwrap();
-        optimizer_torch.add_parameters(&init_torch, 0).unwrap();
+        let optimizer_torch = COptimizer::adam(0.005, 0.9, 0.999, 0.0, 1e-8, false).unwrap();
 
-        for _ in 0..1000 {
-            optimizer_torch.zero_grad().unwrap();
-
-            let loss = (&init_torch * (&init_torch - 1.0)).sum(Kind::Double);
-            loss.backward();
-
-            let grad = Vec::<f64>::try_from(init_torch.grad()).unwrap();
-            optimizer.step(&grad);
-
-            optimizer_torch.step().unwrap();
-
-        }
-
-        println!("{:?}", init_torch);
-        println!("{:?}", optimizer.into_parameters());
-
-        assert!(false)
-
+        assert!(crate::test_utils::compare_optimizers(optimizer, optimizer_torch));
     }
 }

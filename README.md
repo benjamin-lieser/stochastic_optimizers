@@ -1,7 +1,7 @@
 # stochastic_optimizers
 
 ## Implemented Algorithms
- - Adam [Paper](https://arxiv.org/abs/1412.6980)
+ - Adam, see [Paper](https://arxiv.org/abs/1412.6980)
  - Stochastic Gradient Descent (still missing)
  - Adagrad (still missing)
  - RMSprop (still missing)
