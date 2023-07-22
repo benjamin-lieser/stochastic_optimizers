@@ -12,3 +12,7 @@ keywords = ["machine-learning", "optimization", "gradient"]
 [dependencies]
 
 num-traits = "0.2"
+
+[dev-dependencies]
+
+tch = "0.13"
