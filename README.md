@@ -5,6 +5,8 @@ They are designed to be lightweight, flexible and easy to use.
 
 Currently implemted:
 - Adam
+- SGD
+- AdaGrad
 
 The crate does not provide automatic differentiation, the gradient is given by the user.
 
@@ -36,6 +38,10 @@ All types which impement the [`Parameters`](crate::Parameters) trait can be opti
 Implementations for the standart types `f32`, `f64`, `Vec<T : Parameters>` and `[T : Parameters ; N]` are provided.
 
 Its realativly easy to implement it for custom types, see [`Parameters`](crate::Parameters).
+
+## Unit tests
+
+The unit tests require libtorch via the tch crate. See [github](https://github.com/LaurentMazare/tch-rs) for installation details.
 
 ## License
 

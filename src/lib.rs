@@ -3,6 +3,8 @@
 //! 
 //! Currently implemted:
 //! - Adam
+//! - SGD
+//! - AdaGrad
 //! 
 //! The crate does not provide automatic differentiation, the gradient is given by the user.
 //! 
@@ -41,7 +43,9 @@ mod impls;
 #[cfg(test)]
 mod test_utils;
 
-pub use optimizers::Adam;
+pub use optimizers::adam::Adam;
+pub use optimizers::sgd::SGD;
+pub use optimizers::adagrad::AdaGrad;
 
 /// Makes a type be used as a parameter in an optimizer.
 /// The type should represent a owned collection of scalar variables. For example `Vec<f64>` or `[f64;10]`

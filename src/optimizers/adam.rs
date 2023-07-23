@@ -3,7 +3,9 @@ use num_traits::Float;
 
 /// Implements the Adam algorithm
 #[derive(Debug)]
-pub struct Adam<P, Scalar> {
+pub struct Adam<P, Scalar>
+where P : Parameters<Scalar = Scalar>
+{
     parameters : P,
     learning_rate : Scalar,
     beta1 : Scalar,
@@ -18,16 +20,13 @@ impl<Scalar, P : Parameters<Scalar = Scalar>> Adam<P, Scalar>
 where
     Scalar : Float
 {
-
     /// Creates a new Adam optimizer for parameters with given learning rate.
     /// It uses the default values beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8
     pub fn new(parameters : P, learning_rate : Scalar) -> Adam<P, Scalar> {
         let m0 = parameters.zeros();
         let v0 = parameters.zeros();
         Adam { parameters, learning_rate, beta1: Scalar::from(0.9).unwrap(), beta2: Scalar::from(0.999).unwrap(), epsilon: Scalar::from(1e-8).unwrap(), timestep: Scalar::zero(), m0, v0}
-    }
-
-    
+    }  
 }
 
 impl<Scalar, P : Parameters<Scalar = Scalar>> Optimizer for Adam<P, Scalar>
