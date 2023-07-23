@@ -1,36 +1,41 @@
 # stochastic_optimizers
 
-## Implemented Algorithms
- - Adam, see [Paper](https://arxiv.org/abs/1412.6980)
- - Stochastic Gradient Descent (still missing)
- - Adagrad (still missing)
- - RMSprop (still missing)
+This crate provides implementations of common stochstic gradient optimization algorithms.
+They are designed to be lightweight, flexible and easy to use.
 
-## Parameter Trait
+Currently implemted:
+- Adam
 
-Everything which implements the Parameter Trait can be optimized.
+The crate does not provide automatic differentiation, the gradient is given by the user.
 
-This trait essentially only defines how to do x[i] = f(x[i], y[i], z[i]) for Parameter objects x, y and z and arbitrary functions f.
-This allows a large class of types to be used as Parameters to be optimized.
+## Examples
 
-## Workflow
+```rust
+use stochastic_optimizers::{Adam, Optimizer};
+//minimise the function (x-4)^2
+let start = -3.0;
+let mut optimizer = Adam::new(start, 0.1);
 
-This crate does not provide automatic differentiation, but relies on the user to provide the gradients to the optimizer (By using automatic differentiation, analytical gradients, MCMC, ...).
-The otpimizer owns the parameters for the scope of optimization and modiefies them.
+for _ in 0..10000 {
+   let current_paramter = optimizer.parameters();
 
-```Rust
-let initial_parameters = vec![0.0;10];
+   // d/dx (x-4)^2
+   let gradient = 2.0 * current_paramter - 8.0;
 
-let mut optimizer = Adam::new(initial_parameters, 1e-3);
-
-for i in 0..iterations {
-    let gradient = calc_gradient(optimizer.paramerters());
-    optimizer.step(&gradient);
+   optimizer.step(&gradient);
 }
 
-let final_parameters = optimizer.into_parameters();
-
+assert_eq!(optimizer.into_parameters(), 4.0);
 ```
+The parameters are owned by the optimizer and a reference can be optained by [`parameters()`](crate::Optimizer::parameters()).
+After optimization they can be optained by [`into_parameters()`](crate::Optimizer::into_parameters()).
+
+## What types can be optimized
+
+All types which impement the [`Parameters`](crate::Parameters) trait can be optimized.
+Implementations for the standart types `f32`, `f64`, `Vec<T : Parameters>` and `[T : Parameters ; N]` are provided.
+
+Its realativly easy to implement it for custom types, see [`Parameters`](crate::Parameters).
 
 ## License
 
