@@ -36,6 +36,10 @@
 //! Implementations for the standart types `f32`, `f64`, `Vec<T : Parameters>` and `[T : Parameters ; N]` are provided.
 //! 
 //! Its realativly easy to implement it for custom types, see [`Parameters`](crate::Parameters).
+//! 
+//! # ndarray
+//! 
+//! By enabling the `ndarray` feature you can use `Array` as [`Parameters`](crate::Parameters)
 
 mod optimizers;
 mod impls;

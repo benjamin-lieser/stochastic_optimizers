@@ -63,3 +63,58 @@ where T : Parameters
         self.iter_mut().zip(arg1.iter()).zip(arg2.iter()).for_each(|((x, a1), a2)| x.zip2_mut_with(a1, a2, &f));
     }
 }
+
+#[cfg(feature = "ndarray")]
+mod ndarray {
+    use ndarray::{ArrayBase, DataOwned, Dimension, Zip, DataMut};
+    use num_traits::Float;
+
+    use crate::Parameters;
+
+    impl<Scalar, S , D> Parameters for ArrayBase<S, D>
+    where
+        Scalar : Float,
+        S : DataOwned<Elem = Scalar> + DataMut<Elem = Scalar>,
+        D : Dimension
+    {
+        type Scalar = Scalar;
+
+        fn zeros(&self) -> Self {
+            ArrayBase::<S, D>::zeros(self.raw_dim())
+        }
+
+        fn zip2_mut_with<F>(&mut self, arg1: &Self, arg2: &Self, f : F)
+            where
+                F : Fn(&mut Self::Scalar, &Self::Scalar, &Self::Scalar) {
+            Zip::from(self).and(arg1).and(arg2).for_each(f);
+        }
+
+        fn zip_mut_with<F>(&mut self, rhs: &Self, f : F)
+            where
+                F : Fn(&mut Self::Scalar, &Self::Scalar) {
+            self.zip_mut_with(rhs, f);
+        }
+    }
+
+    #[cfg(test)]
+    mod test {
+
+        use ndarray::prelude::*;
+
+        use crate::Optimizer;
+
+        #[test]
+        fn ndarray_test() {
+            let init = Array1::from_vec([1.0, 2.0, 3.0].to_vec());
+
+            let mut optimizer = crate::Adam::new(init, 0.1);
+
+            for _ in 0..1000 {
+                let gradients = optimizer.parameters() * 2.0 - 8.0;
+                optimizer.step(&gradients);
+            }
+
+            assert_eq!(optimizer.into_parameters(), Array1::from_elem([3], 4.0));
+        }
+    }
+}

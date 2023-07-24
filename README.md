@@ -39,6 +39,10 @@ Implementations for the standart types `f32`, `f64`, `Vec<T : Parameters>` and `
 
 Its realativly easy to implement it for custom types, see [`Parameters`](crate::Parameters).
 
+# ndarray
+
+By enabling the `ndarray` feature you can use `Array` as [`Parameters`](crate::Parameters)
+
 ## Unit tests
 
 The unit tests require libtorch via the tch crate. See [github](https://github.com/LaurentMazare/tch-rs) for installation details.
