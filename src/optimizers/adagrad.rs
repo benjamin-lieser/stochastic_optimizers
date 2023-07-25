@@ -1,5 +1,5 @@
 use crate::{Parameters, Optimizer};
-use num_traits::Float;
+use num_traits::{Float, AsPrimitive};
 
 #[derive(Debug)]
 pub struct AdaGrad<P, Scalar>
@@ -15,13 +15,14 @@ pub struct AdaGrad<P, Scalar>
 
 impl<Scalar, P : Parameters<Scalar = Scalar>> AdaGrad<P, Scalar>
 where
-    Scalar : Float
+    Scalar : Float + 'static,
+    f64 : AsPrimitive<Scalar>
 {
     /// Creates a new AdaGrad optimizer for parameters with given learning rate.
     /// It uses a weight decay of 0.0
     pub fn new(parameters : P, learning_rate : Scalar) -> AdaGrad<P, Scalar> {
         let state_sum  = parameters.zeros();
-        AdaGrad { parameters, learning_rate, learning_rate_decay: Scalar::from(0.0).unwrap(), state_sum, epsilon: Scalar::from(1e-10).unwrap(), timestep : Scalar::from(0.0).unwrap()}
+        AdaGrad { parameters, learning_rate, learning_rate_decay: 0.0.as_(), state_sum, epsilon: 1e-10.as_(), timestep : 0.0.as_()}
     }
 }
 
