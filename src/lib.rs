@@ -2,9 +2,9 @@
 //! They are designed to be lightweight, flexible and easy to use.
 //! 
 //! Currently implemted:
-//! - Adam
-//! - SGD
-//! - AdaGrad
+//! - [`Adam`](Adam)
+//! - [`SGD`](SGD)
+//! - [`AdaGrad`](AdaGrad)
 //! 
 //! The crate does not provide automatic differentiation, the gradient is given by the user.
 //! 
@@ -48,6 +48,7 @@ mod impls;
 mod test_utils;
 
 pub use optimizers::adam::Adam;
+pub use optimizers::adam::AdamBuilder;
 pub use optimizers::sgd::SGD;
 pub use optimizers::adagrad::AdaGrad;
 

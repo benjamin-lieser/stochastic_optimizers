@@ -3,34 +3,78 @@ use num_traits::{Float, AsPrimitive};
 
 /// Implements the Adam algorithm
 #[derive(Debug)]
-pub struct Adam<P, Scalar>
-where P : Parameters<Scalar = Scalar>
-{
+pub struct Adam<P : Parameters> {
     parameters : P,
-    learning_rate : Scalar,
-    beta1 : Scalar,
-    beta2 : Scalar,
-    epsilon : Scalar,
-    timestep : Scalar,
+    learning_rate : P::Scalar,
+    beta1 : P::Scalar,
+    beta2 : P::Scalar,
+    epsilon : P::Scalar,
+    timestep : P::Scalar,
     m0 : P,
     v0 : P
 }
 
-impl<Scalar, P : Parameters<Scalar = Scalar>> Adam<P, Scalar>
+pub struct AdamBuilder<P : Parameters>(Adam<P>);
+
+impl<Scalar, P : Parameters<Scalar = Scalar>> Adam<P>
 where
     Scalar : Float + 'static,
     f64 : AsPrimitive<Scalar>
 {
     /// Creates a new Adam optimizer for parameters with given learning rate.
     /// It uses the default values beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8
-    pub fn new(parameters : P, learning_rate : Scalar) -> Adam<P, Scalar> {
+    /// When you want different values use the [`builder`](Adam::builder) function
+    pub fn new(parameters : P, learning_rate : Scalar) -> Adam<P> {
         let m0 = parameters.zeros();
         let v0 = parameters.zeros();
         Adam { parameters, learning_rate, beta1: 0.9.as_(), beta2: 0.999.as_(), epsilon: 1e-8.as_(), timestep: 0.0.as_(), m0, v0}
-    }  
+    }
+
+    /// Creates a builder for Adam. It uses the default values learning_rate = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e.8.
+    /// These can be changes by calling methods on [`AdamBuilder`](AdamBuilder).
+    /// ```
+    /// use stochastic_optimizers::Adam;
+    /// let init = 0.5;
+    /// 
+    /// let optimizer = Adam::builder(init).learning_rate(0.1).beta2(0.99).build();
+    /// ```
+    pub fn builder(parameters : P) -> AdamBuilder<P> {
+        let m0 = parameters.zeros();
+        let v0 = parameters.zeros();
+        let adam = Adam { parameters, learning_rate : 0.001.as_(), beta1: 0.9.as_(), beta2: 0.999.as_(), epsilon: 1e-8.as_(), timestep: 0.0.as_(), m0, v0};
+
+        AdamBuilder(adam)
+    }
+   
 }
 
-impl<Scalar, P : Parameters<Scalar = Scalar>> Optimizer for Adam<P, Scalar>
+impl<P : Parameters> AdamBuilder<P> {
+    pub fn learning_rate(mut self, learning_rate : P::Scalar) -> AdamBuilder<P> {
+        self.0.learning_rate = learning_rate;
+        self
+    }
+
+    pub fn beta1(mut self, beta1 : P::Scalar) -> AdamBuilder<P> {
+        self.0.beta1 = beta1;
+        self
+    }
+
+    pub fn beta2(mut self, beta2 : P::Scalar) -> AdamBuilder<P> {
+        self.0.beta2 = beta2;
+        self
+    }
+
+    pub fn epsilon(mut self, epsilon : P::Scalar) -> AdamBuilder<P> {
+        self.0.epsilon = epsilon;
+        self
+    }
+
+    pub fn build(self) -> Adam<P> {
+        self.0
+    }
+}
+
+impl<Scalar, P : Parameters<Scalar = Scalar>> Optimizer for Adam<P>
 where
     Scalar : Float
 {
@@ -93,6 +137,17 @@ mod tests {
         let init = vec![3.0, 1.0, 4.0, 1.0, 5.0];
 
         let optimizer = Adam::new(init, 0.005);
+
+        let optimizer_torch = COptimizer::adam(0.005, 0.9, 0.999, 0.0, 1e-8, false).unwrap();
+
+        assert!(crate::test_utils::compare_optimizers(optimizer, optimizer_torch));
+    }
+
+    #[test]
+    fn builder() {
+        let init = vec![3.0, 1.0, 4.0, 1.0, 5.0];
+
+        let optimizer = Adam::builder(init).learning_rate(0.005).build();
 
         let optimizer_torch = COptimizer::adam(0.005, 0.9, 0.999, 0.0, 1e-8, false).unwrap();
 
