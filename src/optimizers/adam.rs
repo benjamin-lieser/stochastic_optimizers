@@ -14,6 +14,7 @@ pub struct Adam<P : Parameters> {
     v0 : P
 }
 
+/// See [`Adam::builder`](Adam::builder)
 pub struct AdamBuilder<P : Parameters>(Adam<P>);
 
 impl<Scalar, P : Parameters<Scalar = Scalar>> Adam<P>
