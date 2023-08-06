@@ -96,17 +96,20 @@ pub trait Parameters {
 pub trait Optimizer {
 
     /// the Parameter type of the optimizer
-    type Para;
+    type P : Parameters;
 
     /// gives a reference to the parameters
-    fn parameters(&self) -> &Self::Para;
+    fn parameters(&self) -> &Self::P;
 
     /// gives a mutable reference to the parameters. Can be used to manually update them during optimization.
-    fn parameters_mut(&mut self) -> &mut Self::Para;
+    fn parameters_mut(&mut self) -> &mut Self::P;
 
     /// performes on update of the optimizer with the provided gradients
-    fn step(&mut self, gradients : &Self::Para);
+    fn step(&mut self, gradients : &Self::P);
 
     /// Consumes the optimizer and returns the owned parameters. Typically used at the end of optimization.
-    fn into_parameters(self) -> Self::Para;
+    fn into_parameters(self) -> Self::P;
+
+    /// Changes the learning rate of the Optimizer, this has to be save also during optimization
+    fn change_learning_rate(&mut self, learning_rate : <Self::P as Parameters>::Scalar);
 }

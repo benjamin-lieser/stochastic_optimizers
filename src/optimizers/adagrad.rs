@@ -2,35 +2,33 @@ use crate::{Parameters, Optimizer};
 use num_traits::{Float, AsPrimitive};
 
 #[derive(Debug)]
-pub struct AdaGrad<P, Scalar>
-    where P : Parameters<Scalar = Scalar>
-{
+pub struct AdaGrad<P : Parameters>{
     parameters : P,
-    learning_rate : Scalar,
-    learning_rate_decay : Scalar,
+    learning_rate : P::Scalar,
+    learning_rate_decay : P::Scalar,
     state_sum : P,
-    epsilon: Scalar,
-    timestep: Scalar
+    epsilon: P::Scalar,
+    timestep: P::Scalar
 }
 
-impl<Scalar, P : Parameters<Scalar = Scalar>> AdaGrad<P, Scalar>
+impl<Scalar, P : Parameters<Scalar = Scalar>> AdaGrad<P>
 where
     Scalar : Float + 'static,
     f64 : AsPrimitive<Scalar>
 {
     /// Creates a new AdaGrad optimizer for parameters with given learning rate.
     /// It uses a weight decay of 0.0
-    pub fn new(parameters : P, learning_rate : Scalar) -> AdaGrad<P, Scalar> {
+    pub fn new(parameters : P, learning_rate : Scalar) -> AdaGrad<P> {
         let state_sum  = parameters.zeros();
         AdaGrad { parameters, learning_rate, learning_rate_decay: 0.0.as_(), state_sum, epsilon: 1e-10.as_(), timestep : 0.0.as_()}
     }
 }
 
-impl<Scalar, P : Parameters<Scalar = Scalar>> Optimizer for AdaGrad<P, Scalar>
+impl<Scalar, P : Parameters<Scalar = Scalar>> Optimizer for AdaGrad<P>
 where
     Scalar : Float
 {
-    type Para = P;
+    type P = P;
 
     fn step(&mut self, gradients : &P) {
         self.timestep = self.timestep + Scalar::one();
@@ -53,6 +51,10 @@ where
 
     fn into_parameters(self) -> P {
         self.parameters
+    }
+
+    fn change_learning_rate(&mut self, learning_rate : Scalar) {
+        self.learning_rate = learning_rate;
     }
 }
 

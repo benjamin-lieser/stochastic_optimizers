@@ -79,7 +79,7 @@ impl<Scalar, P : Parameters<Scalar = Scalar>> Optimizer for Adam<P>
 where
     Scalar : Float
 {
-    type Para = P;
+    type P = P;
 
     fn step(&mut self, gradients : &P) {
         self.timestep = self.timestep + Scalar::one();
@@ -106,6 +106,10 @@ where
 
     fn into_parameters(self) -> P {
         self.parameters
+    }
+
+    fn change_learning_rate(&mut self, learning_rate : Scalar) {
+        self.learning_rate = learning_rate;
     }
 }
 

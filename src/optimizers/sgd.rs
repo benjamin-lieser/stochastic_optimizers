@@ -2,28 +2,26 @@ use crate::{Parameters, Optimizer};
 use num_traits::Float;
 
 #[derive(Debug)]
-pub struct SGD<P, Scalar>
-    where P : Parameters<Scalar = Scalar>
-{
+pub struct SGD<P : Parameters> {
     parameters : P,
-    learning_rate : Scalar
+    learning_rate : P::Scalar
 }
 
-impl<Scalar, P : Parameters<Scalar = Scalar>> SGD<P, Scalar>
+impl<Scalar, P : Parameters<Scalar = Scalar>> SGD<P>
 where
     Scalar : Float
 {
     /// Creates a new SGD optimizer for parameters with given learning rate.
-    pub fn new(parameters : P, learning_rate : Scalar) -> SGD<P, Scalar> {
+    pub fn new(parameters : P, learning_rate : Scalar) -> SGD<P> {
         SGD { parameters, learning_rate}
     }
 }
 
-impl<Scalar, P : Parameters<Scalar = Scalar>> Optimizer for SGD<P, Scalar>
+impl<Scalar, P : Parameters<Scalar = Scalar>> Optimizer for SGD<P>
 where
     Scalar : Float
 {
-    type Para = P;
+    type P = P;
 
     fn step(&mut self, gradients : &P) {
         self.parameters.zip_mut_with(&gradients, |p,&g| *p = *p - self.learning_rate * g);
@@ -39,6 +37,10 @@ where
 
     fn into_parameters(self) -> P {
         self.parameters
+    }
+
+    fn change_learning_rate(&mut self, learning_rate : Scalar) {
+        self.learning_rate = learning_rate;
     }
 }
 

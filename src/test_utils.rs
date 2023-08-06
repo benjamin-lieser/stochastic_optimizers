@@ -3,7 +3,7 @@ use tch::Tensor;
 use tch::Kind;
 use crate::Optimizer;
 
-pub fn compare_optimizers(mut my : impl Optimizer<Para = Vec<f64>>, mut pytorch : COptimizer) -> bool {
+pub fn compare_optimizers(mut my : impl Optimizer<P = Vec<f64>>, mut pytorch : COptimizer) -> bool {
     let init_torch  = Tensor::from_slice(my.parameters()).requires_grad_(true);
 
     pytorch.add_parameters(&init_torch, 0).unwrap();
