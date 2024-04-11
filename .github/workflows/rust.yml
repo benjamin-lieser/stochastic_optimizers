@@ -16,5 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --verbose --features download-libtorch,ndarray
     - name: Run tests
-      run: cargo test --verbose --features download-libtorch ndarray
+      run: cargo test --verbose --features download-libtorch,ndarray
