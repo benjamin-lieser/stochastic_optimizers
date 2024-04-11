@@ -17,3 +17,7 @@ ndarray = {version = ">=0.15", optional = true}
 [dev-dependencies]
 
 tch = "0.13"
+
+[features]
+
+download-libtorch = ["tch/download-libtorch"]
